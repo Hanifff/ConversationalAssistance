@@ -8,7 +8,6 @@ class IndexManagement:
 
     def init_index(self, index_name: str, index_setting: Dict) -> None:
         """ Creates an instance of elastics search.
-
         Args:
             index_name: Name of index.
             index_setting: Index setting chosen for the elastics search instance.
@@ -20,7 +19,6 @@ class IndexManagement:
 
     def index_data(self, index_name: str, doc_id: str, doc: str):
         """ Indexes data into the elastics search instance.
-
         Args:
             index_name: Name of index.
             doc_id: Id of the document to be indexed.
@@ -33,7 +31,6 @@ class IndexManagement:
 def index_msmarco(filepath: str):
     """ Initalizes an instance of IndexManagement and defines the index's setting.
         Then, it indexes each line of ms_marco document using the elastiscsearch instance.
-
     Args:
         filepath: Path of ms_marco document in local disk.
     """
