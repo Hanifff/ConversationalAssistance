@@ -1,3 +1,4 @@
 elasticsearch >= 7.15
 cbor2 
 json
+rank_bm25
