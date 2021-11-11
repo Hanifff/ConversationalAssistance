@@ -6,10 +6,24 @@ import json
 
 
 class IndexManagement:
-    def __init__(self):
-        self.es_cli = Elasticsearch(
-            timeout=30, max_retries=5, retry_on_timeout=True)
+    def __init__(self, es_cli: Elasticsearch):
+        self.es_cli = es_cli
         self.es_cli.info()
+        # use default setting
+        self.setting = {
+            "settings": {
+                "number_of_shards": 5,
+                "index": {
+                    "similarity": {
+                        "default": {
+                            "type": "BM25",
+                            "b": 1.2,
+                            "k1": 1.2,
+                        }
+                    }
+                }
+            }
+        }
 
     def index_data(self, index_name: str, filepath: str) -> None:
         """ Indexes data into the elastics search instance.
@@ -45,12 +59,14 @@ class IndexManagement:
         """
         if self.es_cli.indices.exists(index_name):
             self.es_cli.indices.delete(index=index_name)
+        self.es_cli.create(index=index_name, body=self.setting)
 
 
 if __name__ == "__main__":
-    #es = Elasticsearch()
+    es_cli = Elasticsearch(
+        timeout=30, max_retries=5, retry_on_timeout=True)
     filepath = "D:\data_collection/collection.tsv"
     index_name = 'ms_marco'
-    index_mng = IndexManagement()
-    index_mng.reset_index(index_name)
+    index_mng = IndexManagement(es_cli)
+    # index_mng.reset_index(index_name)
     index_mng.index_data(index_name, filepath)
