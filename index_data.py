@@ -9,7 +9,7 @@ from trec_car.read_data import *
 class IndexManagement:
     def __init__(self):
         self.es_cli = Elasticsearch(
-            timeout=30, max_retries=5, retry_on_timeout=True)
+            timeout=200, max_retries=15, retry_on_timeout=True)
         self.es_cli.info()
         # use default setting
         self.setting = {
@@ -35,7 +35,7 @@ class IndexManagement:
             doc: Document to be indexed.
         """
 
-        batch_size = 1000
+        batch_size = 5000
         f = open(filepath, 'r', encoding='utf-8')
         lines = f.readlines()
         for i in range(0, len(lines), batch_size):
@@ -100,15 +100,11 @@ class IndexManagement:
 
 if __name__ == "__main__":
     #es = Elasticsearch()
-    '''filepath = "E:\docs\paragraphCorpus\collection.tsv"
+    filepath_marco = "E:\docs\paragraphCorpus\collection.tsv"
+    filepath_car = "../data_collection/dedup.articles-paragraphs.cbor"
     index_name = 'ms_marco'
     index_mng = IndexManagement()
     index_mng.reset_index(index_name)
-    index_mng.index_data(index_name, filepath)'''
-
-    #filepath = "E:\docs\paragraphCorpus\dedup.articles-paragraphs.cbor"
-    filepath = "../data_collection/dedup.articles-paragraphs.cbor"
-    index_name = 'ms_marco'
-    index_mng = IndexManagement()
-    # index_mng.reset_index(index_name)
-    index_mng.index_cbor_data(index_name, filepath)
+    index_mng.index_data(index_name, filepath_marco)
+    index_mng.index_cbor_data(index_name, filepath_car)
+    # print(es.count(index="ms_marco"))

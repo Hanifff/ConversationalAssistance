@@ -6,9 +6,8 @@ from index_data import IndexManagement
 
 
 class BaseLine(IndexManagement):
-    def __init__(self, es_cli: Elasticsearch, collection_name: str = "MARCO_") -> None:
-        super(BaseLine, self).__init__(es_cli)
-        self.collection_name = collection_name
+    def __init__(self) -> None:
+        super(BaseLine, self).__init__()
 
     def analyze_query(self, query: str, field: str, index_name: str) -> List[str]:
         """Analyzes a query with respect to the relevant index.
@@ -73,7 +72,11 @@ class BaseLine(IndexManagement):
                     index=index_name, q=" ".join(query_terms), _source=True, size=100
                 )["hits"]["hits"]
                 for i in range(len(hits)):
-                    passage_id = self.collection_name + hits[i]["_id"]
+                    passage_id = ""
+                    if len(hits[i]["_id"]) < 12:
+                        passage_id = "MARCO_" + hits[i]["_id"]
+                    else:
+                        passage_id = "CAR_" + hits[i]["_id"]
                     bm25_result.write(TOPICID_TURNID+' '+Q_0 + ' '+passage_id +
                                       ' '+str(i+1)+' '+str(round(hits[i]["_score"], 1))+' '+"Team-011"+'\n')
 
@@ -81,9 +84,8 @@ class BaseLine(IndexManagement):
 
 
 if __name__ == "__main__":
-    es_cli = Elasticsearch(
-        timeout=30, max_retries=5, retry_on_timeout=True)
+    #es = Elasticsearch()
     filepath = "./data/evaluation/2020_manual_evaluation_topics_v1.0.json"
     index_name = 'ms_marco'
-    index_mng = BaseLine(es_cli, 'MARCO_')
+    index_mng = BaseLine()
     index_mng.score_term(index_name, filepath)
