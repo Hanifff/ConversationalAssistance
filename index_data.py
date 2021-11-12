@@ -54,6 +54,12 @@ class IndexManagement:
             self.es_cli.bulk(index=index_name, body=bulk_data, refresh=True)
 
     def index_cbor_data(self, index_name: str, filepath: str) -> None:
+        """[summary]
+
+        Args:
+            index_name (str): [description]
+            filepath (str): [description]
+        """
         batch_size = 5000
         bulk_data = []
         with open(filepath, 'rb') as fp:
@@ -72,7 +78,6 @@ class IndexManagement:
                                "_id": _elem.pop("doc_id")}}
                 )
                 bulk_data.append(_elem)
-
                 if (i+1) % batch_size == 0:
                     self.es_cli.bulk(index=index_name,
                                      body=bulk_data, refresh=True)
@@ -101,7 +106,8 @@ if __name__ == "__main__":
     index_mng.reset_index(index_name)
     index_mng.index_data(index_name, filepath)'''
 
-    filepath = "E:\docs\paragraphCorpus\dedup.articles-paragraphs.cbor"
+    #filepath = "E:\docs\paragraphCorpus\dedup.articles-paragraphs.cbor"
+    filepath = "../data_collection/dedup.articles-paragraphs.cbor"
     index_name = 'ms_marco'
     index_mng = IndexManagement()
     # index_mng.reset_index(index_name)
