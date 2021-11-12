@@ -10,6 +10,21 @@ class IndexManagement:
         self.es_cli = Elasticsearch(
             timeout=30, max_retries=5, retry_on_timeout=True)
         self.es_cli.info()
+        # use default setting
+        self.setting = {
+            "settings": {
+                "number_of_shards": 5,
+                "index": {
+                    "similarity": {
+                        "default": {
+                            "type": "BM25",
+                            "b": 1.2,
+                            "k1": 1.2,
+                        }
+                    }
+                }
+            }
+        }
 
     def index_text_data(self, index_name: str, filepath: str) -> None:
         """ Indexes data into the elastics search instance.
@@ -74,6 +89,7 @@ class IndexManagement:
         """
         if self.es_cli.indices.exists(index_name):
             self.es_cli.indices.delete(index=index_name)
+        self.es_cli.create(index=index_name, body=self.setting)
                 
 
 if __name__ == "__main__":
