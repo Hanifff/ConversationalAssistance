@@ -63,7 +63,8 @@ class BaseLine(IndexManagement):
             TOPICID = str(data[i]["number"])+'_'
             for turn in data[i]['turn']:
                 TOPICID_TURNID = TOPICID+str(turn["number"])
-                query = turn['manual_rewritten_utterance']
+                #query = turn['manual_rewritten_utterance']
+                query = turn['automatic_rewritten_utterance']
                 # First-pass retrieval
                 query_terms = self.analyze_query(
                     query, "body", index_name)
@@ -85,7 +86,8 @@ class BaseLine(IndexManagement):
 
 if __name__ == "__main__":
     #es = Elasticsearch()
-    filepath = "./data/evaluation/2020_manual_evaluation_topics_v1.0.json"
+    #filepath_manual = "./data/evaluation/2020_manual_evaluation_topics_v1.0.json"
+    filepath_auto = "./data/evaluation/2020_automatic_evaluation_topics_v1.0.json"
     index_name = 'ms_marco'
     index_mng = BaseLine()
-    index_mng.score_term(index_name, filepath)
+    index_mng.score_term(index_name, filepath_auto)

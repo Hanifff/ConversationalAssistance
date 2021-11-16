@@ -1,5 +1,5 @@
 from re import split
-from typing import Dict
+from typing import Dict, Mapping
 from elasticsearch import Elasticsearch
 import cbor
 import json
@@ -95,16 +95,17 @@ class IndexManagement:
         """
         if self.es_cli.indices.exists(index_name):
             self.es_cli.indices.delete(index=index_name)
-        self.es_cli.create(index=index_name, body=self.setting)
+        # self.es_cli.create(index=index_name)
 
 
 if __name__ == "__main__":
-    #es = Elasticsearch()
-    filepath_marco = "E:\docs\paragraphCorpus\collection.tsv"
+    """ filepath_marco = "D:\data_collection/collection.tsv"
     filepath_car = "../data_collection/dedup.articles-paragraphs.cbor"
     index_name = 'ms_marco'
     index_mng = IndexManagement()
     index_mng.reset_index(index_name)
-    index_mng.index_data(index_name, filepath_marco)
-    index_mng.index_cbor_data(index_name, filepath_car)
-    # print(es.count(index="ms_marco"))
+    index_mng.index_text_data(index_name, filepath_marco)
+    index_mng.index_cbor_data(index_name, filepath_car) """
+
+    es = Elasticsearch()
+    print(es.count(index="ms_marco"))
