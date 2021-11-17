@@ -6,9 +6,8 @@ from index_data import IndexManagement
 
 
 class BaseLine(IndexManagement):
-    def __init__(self, es_cli: Elasticsearch, collection_name: str = "MARCO_") -> None:
-        super(BaseLine, self).__init__(es_cli)
-        self.collection_name = collection_name
+    def __init__(self) -> None:
+        super(BaseLine, self).__init__()
 
     def analyze_query(self, query: str, field: str, index_name: str) -> List[str]:
         """Analyzes a query with respect to the relevant index.
@@ -45,26 +44,26 @@ class BaseLine(IndexManagement):
             query_terms.append(t["token"])
         return query_terms
 
-    def score_term(self, index_name: str, filepath: str) -> None:
+    def score_term(self, index_name: str, query_filepath: str, output_path: str = "./data/results/bm25_man_results.txt") -> None:
         """Ranks passages using the default BM25 in elastisc search module.
             The result is written in a text file with trec_eval format requirements.
 
         Args:
             index_name: Name of indexing instance.
-            query_ids: List of query Ids.
-            all_queries: A key value set of all queries.
+            query_filepath: Path of query file.
         """
         data = {}
         Q_0 = str(0)
-        with open(file=filepath) as f:
+        with open(file=query_filepath) as f:
             data = json.load(f)
         f.close()
-        bm25_result = open("./data/results/bm25_results.txt", "w")
+        bm25_result = open(output_path, "w")
         for i in range(len(data)):
             TOPICID = str(data[i]["number"])+'_'
             for turn in data[i]['turn']:
                 TOPICID_TURNID = TOPICID+str(turn["number"])
-                query = turn['manual_rewritten_utterance']
+                #query = turn['manual_rewritten_utterance']
+                query = turn['automatic_rewritten_utterance']
                 # First-pass retrieval
                 query_terms = self.analyze_query(
                     query, "body", index_name)
@@ -73,7 +72,11 @@ class BaseLine(IndexManagement):
                     index=index_name, q=" ".join(query_terms), _source=True, size=100
                 )["hits"]["hits"]
                 for i in range(len(hits)):
-                    passage_id = self.collection_name + hits[i]["_id"]
+                    passage_id = ""
+                    if len(hits[i]["_id"]) < 12:
+                        passage_id = "MARCO_" + hits[i]["_id"]
+                    else:
+                        passage_id = "CAR_" + hits[i]["_id"]
                     bm25_result.write(TOPICID_TURNID+' '+Q_0 + ' '+passage_id +
                                       ' '+str(i+1)+' '+str(round(hits[i]["_score"], 1))+' '+"Team-011"+'\n')
 
@@ -81,9 +84,14 @@ class BaseLine(IndexManagement):
 
 
 if __name__ == "__main__":
-    es_cli = Elasticsearch(
-        timeout=30, max_retries=5, retry_on_timeout=True)
-    filepath = "./data/evaluation/2020_manual_evaluation_topics_v1.0.json"
+    #es = Elasticsearch()
+    man_input = "./data/evaluation/2020_manual_evaluation_topics_v1.0.json"
+    auto_input = "./data/evaluation/2020_automatic_evaluation_topics_v1.0.json"
+    auto_output = "./data/results/bm25_auto_results.txt"
+
     index_name = 'ms_marco'
-    index_mng = BaseLine(es_cli, 'MARCO_')
-    index_mng.score_term(index_name, filepath)
+    index_mng = BaseLine()
+    index_mng.score_term(index_name, man_input)
+
+    index_mng = BaseLine()
+    index_mng.score_term(index_name, auto_input, output_path=auto_output)
