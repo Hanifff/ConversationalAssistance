@@ -44,18 +44,17 @@ class BaseLine(IndexManagement):
             query_terms.append(t["token"])
         return query_terms
 
-    def score_term(self, index_name: str, filepath: str) -> None:
+    def score_term(self, index_name: str, query_filepath: str) -> None:
         """Ranks passages using the default BM25 in elastisc search module.
             The result is written in a text file with trec_eval format requirements.
 
         Args:
             index_name: Name of indexing instance.
-            query_ids: List of query Ids.
-            all_queries: A key value set of all queries.
+            query_filepath: Path of query file.
         """
         data = {}
         Q_0 = str(0)
-        with open(file=filepath) as f:
+        with open(file=query_filepath) as f:
             data = json.load(f)
         f.close()
         bm25_result = open("./data/results/bm25_results.txt", "w")

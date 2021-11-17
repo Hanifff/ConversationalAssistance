@@ -11,30 +11,29 @@ class AdvancedMethod(BaseLine):
             model_name)
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
 
-    def rerank_docs(self, index_name: str, filepath: str) -> None:
-        """Ranks passages using the default BM25 in elastisc search module.
+    def rerank_docs(self, index_name: str, query_filepath: str, output_path: str, query_type: str = 'manual_rewritten_utterance') -> None:
+        """First ranks passages using the default BM25 in elastisc search module.
+            Retreive the top 500 documents and rerank using a BERT transformer.
             The result is written in a text file with trec_eval format requirements.
 
         Args:
             index_name: Name of indexing instance.
-            query_ids: List of query Ids.
-            all_queries: A key value set of all queries.
+            query_filepath: The path of file which contains all queries.
+            output_path: The path of file which we write the result into.
+            query_type: The type of query, that is either manual or automatic rewritten.
         """
         data = {}
         Q_0 = str(0)
-        with open(file=filepath) as f:
+        with open(file=query_filepath) as f:
             data = json.load(f)
         f.close()
-        bert_rerank_result = open(
-            "./data/results/bert_rerank_manual_results.txt", "w")
+        bert_rerank_result = open(output_path, "w")
 
         for i in range(len(data)):
             TOPICID = str(data[i]["number"])+'_'
             for turn in data[i]['turn']:
                 TOPICID_TURNID = TOPICID+str(turn["number"])
-
-                query = turn['manual_rewritten_utterance']
-                #query = turn['automatic_rewritten_utterance']
+                query = turn[query_type]
 
                 # First-pass retrieval
                 query_terms = self.analyze_query(
@@ -83,7 +82,19 @@ class AdvancedMethod(BaseLine):
 
 
 if __name__ == "__main__":
+    man_input = './data/evaluation/2020_manual_evaluation_topics_v1.0.json'
+    man_output = "./data/results/bert_rerank_manual_results.txt"
+    auto_input = './data/evaluation/2020_automatic_evaluation_topics_v1.0.json'
+    auto_output = "./data/results/bert_rerank_auto_results.txt"
     index_mng = AdvancedMethod(
         model_name="cross-encoder/ms-marco-MiniLM-L-2-v2")
+    # manual utterances
     index_mng.rerank_docs(
-        index_name='ms_marco', filepath='./data/evaluation/2020_manual_evaluation_topics_v1.0.json')
+        index_name='ms_marco', query_filepath=man_input, output_path=man_output)
+
+    index_mng = AdvancedMethod(
+        model_name="cross-encoder/ms-marco-MiniLM-L-2-v2")
+    # automatic uterances
+    index_mng.rerank_docs(
+        index_name='ms_marco', query_filepath=auto_input, output_path=auto_output,
+        query_type='automatic_rewritten_utterance')
