@@ -40,7 +40,7 @@ class AdvancedMethod(BaseLine):
                     query, "body", index_name)
 
                 hits = self.es_cli.search(
-                    index=index_name, q=" ".join(query_terms), _source=True, size=500
+                    index=index_name, q=" ".join(query_terms), _source=True, size=1000
                 )["hits"]["hits"]
                 docs = [None]*500
                 for i in range(len(hits)):
@@ -75,7 +75,7 @@ class AdvancedMethod(BaseLine):
                 rank = 1
                 for passage_id, score in sorted_reranks.items():
                     bert_rerank_result.write(TOPICID_TURNID+' '+Q_0 + ' '+passage_id +
-                                             ' '+str(rank)+' '+str(round(score, 2))+' '+"Team-011"+'\n')
+                                             ' '+str(rank)+' '+str(score)+' '+"Team-011"+'\n')
                     rank += 1
 
         bert_rerank_result.close()
