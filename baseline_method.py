@@ -44,7 +44,7 @@ class BaseLine(IndexManagement):
             query_terms.append(t["token"])
         return query_terms
 
-    def score_term(self, index_name: str, query_filepath: str) -> None:
+    def score_term(self, index_name: str, query_filepath: str, output_path: str = "./data/results/bm25_man_results.txt") -> None:
         """Ranks passages using the default BM25 in elastisc search module.
             The result is written in a text file with trec_eval format requirements.
 
@@ -57,7 +57,7 @@ class BaseLine(IndexManagement):
         with open(file=query_filepath) as f:
             data = json.load(f)
         f.close()
-        bm25_result = open("./data/results/bm25_results.txt", "w")
+        bm25_result = open(output_path, "w")
         for i in range(len(data)):
             TOPICID = str(data[i]["number"])+'_'
             for turn in data[i]['turn']:
@@ -85,8 +85,13 @@ class BaseLine(IndexManagement):
 
 if __name__ == "__main__":
     #es = Elasticsearch()
-    #filepath_manual = "./data/evaluation/2020_manual_evaluation_topics_v1.0.json"
-    filepath_auto = "./data/evaluation/2020_automatic_evaluation_topics_v1.0.json"
+    man_input = "./data/evaluation/2020_manual_evaluation_topics_v1.0.json"
+    auto_input = "./data/evaluation/2020_automatic_evaluation_topics_v1.0.json"
+    auto_output = "./data/results/bm25_auto_results.txt"
+
     index_name = 'ms_marco'
     index_mng = BaseLine()
-    index_mng.score_term(index_name, filepath_auto)
+    index_mng.score_term(index_name, man_input)
+
+    index_mng = BaseLine()
+    index_mng.score_term(index_name, auto_input, output_path=auto_output)
