@@ -19,7 +19,7 @@ class IndexManagement:
                     "similarity": {
                         "default": {
                             "type": "BM25",
-                            "b": 1.2,
+                            "b": 0.75,
                             "k1": 1.2,
                         }
                     }

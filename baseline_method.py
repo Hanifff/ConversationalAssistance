@@ -62,14 +62,14 @@ class BaseLine(IndexManagement):
             TOPICID = str(data[i]["number"])+'_'
             for turn in data[i]['turn']:
                 TOPICID_TURNID = TOPICID+str(turn["number"])
-                #query = turn['manual_rewritten_utterance']
+                # query = turn['manual_rewritten_utterance']
                 query = turn['automatic_rewritten_utterance']
                 # First-pass retrieval
                 query_terms = self.analyze_query(
                     query, "body", index_name)
 
                 hits = self.es_cli.search(
-                    index=index_name, q=" ".join(query_terms), _source=True, size=100
+                    index=index_name, q=" ".join(query_terms), _source=True, size=1000
                 )["hits"]["hits"]
                 for i in range(len(hits)):
                     passage_id = ""
@@ -78,13 +78,13 @@ class BaseLine(IndexManagement):
                     else:
                         passage_id = "CAR_" + hits[i]["_id"]
                     bm25_result.write(TOPICID_TURNID+' '+Q_0 + ' '+passage_id +
-                                      ' '+str(i+1)+' '+str(round(hits[i]["_score"], 1))+' '+"Team-011"+'\n')
+                                      ' '+str(i+1)+' '+str(hits[i]["_score"])+' '+"Team-011"+'\n')
 
         bm25_result.close()
 
 
 if __name__ == "__main__":
-    #es = Elasticsearch()
+    # es = Elasticsearch()
     man_input = "./data/evaluation/2020_manual_evaluation_topics_v1.0.json"
     auto_input = "./data/evaluation/2020_automatic_evaluation_topics_v1.0.json"
     auto_output = "./data/results/bm25_auto_results.txt"
