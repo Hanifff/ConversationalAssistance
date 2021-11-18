@@ -1,7 +1,5 @@
 import json
-from typing import List, Dict
-
-from elasticsearch.client import Elasticsearch
+from typing import List
 from index_data import IndexManagement
 
 
@@ -44,7 +42,9 @@ class BaseLine(IndexManagement):
             query_terms.append(t["token"])
         return query_terms
 
-    def score_term(self, index_name: str, query_filepath: str, output_path: str = "./data/results/bm25_man_results.txt") -> None:
+    def score_term(self, index_name: str, query_filepath: str,
+                   query_type: str = 'manual_rewritten_utterance',
+                   output_path: str = "./data/results/bm25_man_results.txt") -> None:
         """Ranks passages using the default BM25 in elastisc search module.
             The result is written in a text file with trec_eval format requirements.
 
@@ -62,8 +62,7 @@ class BaseLine(IndexManagement):
             TOPICID = str(data[i]["number"])+'_'
             for turn in data[i]['turn']:
                 TOPICID_TURNID = TOPICID+str(turn["number"])
-                # query = turn['manual_rewritten_utterance']
-                query = turn['automatic_rewritten_utterance']
+                query = turn[query_type]
                 # First-pass retrieval
                 query_terms = self.analyze_query(
                     query, "body", index_name)
@@ -79,19 +78,17 @@ class BaseLine(IndexManagement):
                         passage_id = "CAR_" + hits[i]["_id"]
                     bm25_result.write(TOPICID_TURNID+' '+Q_0 + ' '+passage_id +
                                       ' '+str(i+1)+' '+str(hits[i]["_score"])+' '+"Team-011"+'\n')
-
         bm25_result.close()
 
 
 if __name__ == "__main__":
-    # es = Elasticsearch()
     man_input = "./data/evaluation/2020_manual_evaluation_topics_v1.0.json"
     auto_input = "./data/evaluation/2020_automatic_evaluation_topics_v1.0.json"
     auto_output = "./data/results/bm25_auto_results.txt"
-
     index_name = 'ms_marco'
     index_mng = BaseLine()
+    # manual
     index_mng.score_term(index_name, man_input)
-
-    index_mng = BaseLine()
-    index_mng.score_term(index_name, auto_input, output_path=auto_output)
+    # automatic
+    index_mng.score_term(index_name, auto_input,
+                         query_type='automatic_rewritten_utterance', output_path=auto_output)
