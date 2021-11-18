@@ -92,9 +92,6 @@ if __name__ == "__main__":
     # manual utterances
     index_mng.rerank_docs(
         index_name='ms_marco', query_filepath=man_input, output_path=man_output)
-
-    index_mng = AdvancedMethod(
-        model_name="cross-encoder/ms-marco-MiniLM-L-2-v2")
     # automatic uterances
     index_mng.rerank_docs(
         index_name='ms_marco', query_filepath=auto_input, output_path=auto_output,
