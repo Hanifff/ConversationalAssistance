@@ -39,6 +39,7 @@ class AdvancedMethod(BaseLine):
                 query_terms = self.analyze_query(
                     query, "body", index_name)
 
+                # we would retrieve 1000, but because of performance issues we only retrieve 500
                 hits = self.es_cli.search(
                     index=index_name, q=" ".join(query_terms), _source=True, size=500
                 )["hits"]["hits"]
@@ -75,7 +76,7 @@ class AdvancedMethod(BaseLine):
                 rank = 1
                 for passage_id, score in sorted_reranks.items():
                     bert_rerank_result.write(TOPICID_TURNID+' '+Q_0 + ' '+passage_id +
-                                             ' '+str(rank)+' '+str(round(score, 2))+' '+"Team-011"+'\n')
+                                             ' '+str(rank)+' '+str(score)+' '+"Team-011"+'\n')
                     rank += 1
 
         bert_rerank_result.close()
