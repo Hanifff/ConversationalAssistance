@@ -42,13 +42,13 @@ class AdvancedMethod(BaseLine):
                 hits = self.es_cli.search(
                     index=index_name, q=" ".join(query_terms), _source=True, size=1000
                 )["hits"]["hits"]
-                docs = [None]*500
+                docs = [None]*1000
                 for i in range(len(hits)):
                     docs[i] = hits[i]['_source']['body'].strip()
 
                 # Second-pass reranking - #BERT BASE
                 features = self.tokenizer(
-                    [" ".join(query_terms)]*500, docs,  padding=True, truncation=True, return_tensors="pt")
+                    [" ".join(query_terms)]*1000, docs,  padding=True, truncation=True, return_tensors="pt")
 
                 self.model.eval()
                 scores = None
