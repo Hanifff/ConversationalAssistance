@@ -12,17 +12,17 @@ In addition you need a elastisc search server up and running.
 
 We have listed are package requirements in the [requirements.txt]("./requirements"). Use the following command to install: <br>
 
-> python -m pip install -r requirements.txt
+`python -m pip install -r requirements.txt`
 
 ## To run the retreival models
 
 Run the baseline method:<br>
 
-> python baseline_method.py
+`python baseline_method.py`
 
 Run the advance method:<br>
 
-> python advanced_method.py
+`python advanced_method.py`
 
 ## Testing the results
 
@@ -32,18 +32,18 @@ You can use the commands in the this section to run test using trec-eval tools:
 
 For the manual rewritten queries:<br>
 
-> trec_eval -q data/judgment_file.txt data/results/bm25_man_results.txt > data/benchmark/result_man_bm25.txt -m all_trec
+`trec_eval -q data/judgment_file.txt data/results/bm25_man_results.txt > data/benchmark/result_man_bm25.txt -m all_trec`
 
 For the automatic rewritten queries:<br>
 
-> trec_eval -q data/judgment_file.txt data/results/bm25_auto_results.txt > data/benchmark/result_auto_bm25.txt -m all_trec
+`trec_eval -q data/judgment_file.txt data/results/bm25_auto_results.txt > data/benchmark/result_auto_bm25.txt -m all_trec`
 
 ### Advanced method evaluation
 
 For the manual rewritten queries:<br>
 
-> trec_eval -q data/judgment_file.txt data/results/bert_rerank_manual_results.txt > data/benchmark/result_man_bert.txt -m all_trec
+`trec_eval -q data/judgment_file.txt data/results/bert_rerank_manual_results.txt > data/benchmark/result_man_bert.txt -m all_trec`
 
 For the automatic rewritten queries:<br>
 
-> trec_eval -q data/judgment_file.txt data/results/bert_rerank_auto_results.txt > data/benchmark/result_auto_bert.txt -m all_trec
+`trec_eval -q data/judgment_file.txt data/results/bert_rerank_auto_results.txt > data/benchmark/result_auto_bert.txt -m all_trec`
