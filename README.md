@@ -58,4 +58,6 @@ trec_eval -q data/judgment_file.txt data/results/bert_rerank_manual_results.txt 
 
 For the automatic rewritten queries:<br>
 
-`trec_eval -q data/judgment_file.txt data/results/bert_rerank_auto_results.txt > data/benchmark/result_auto_bert.txt -m all_trec`
+```shell
+trec_eval -q data/judgment_file.txt data/results/bert_rerank_auto_results.txt > data/benchmark/result_auto_bert.txt -m all_trec
+```
