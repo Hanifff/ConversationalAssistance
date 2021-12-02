@@ -1,4 +1,4 @@
-# TREC 2020 Conversational Assistance - DAT640 project
+# TREC 2020 Conversational Assistance
 
 This is a course project for the Information retrieval and text mining (DAT640) course at the University of Stavanger.<br>
 In this project, we develop one baseline and one advanced method to retrieve relevant passages from two large data sets. In the baseline method, we use the BM25 retrieval model and for the advanced method, we use BERT.
