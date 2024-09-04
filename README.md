@@ -1,4 +1,4 @@
-# TREC 2020 Conversational Assistance
+# Conversational Assistance
 
 This project focuses on developing methods to retrieve relevant passages from two large datasets. We implement both a baseline method using the BM25 retrieval model and an advanced method using BERT.
 
